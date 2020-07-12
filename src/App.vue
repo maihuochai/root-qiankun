@@ -1,19 +1,31 @@
 <template lang="pug">
   div( id="app" :class="$style.appInner")
     header
+      button(@click="handleClick") 添加一条记录
       router-link(to="/goods") goods
       router-link(to="/personal") personal
     div(v-if="loading" :class="$style.loading") loading....
-    div(:class="$style.appContainer" v-html="content") content
+    div#appContainer(:class="$style.appContainer")
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
+import { namespace, State } from 'vuex-class'
+
+const user = namespace('user')
 
 @Component
 export default class App extends Vue {
-  @Prop(Boolean) loading!: boolean
-  @Prop(String) content!: string
+  @State('loading') loading!:boolean
+
+  @user.Mutation('SET_RECORD') setRecord!:(data:{record: string;fromType: 'MAIN_APPLICATION' | 'MICRO_APPLICATION';})=>void
+
+  handleClick () {
+    this.setRecord({
+      record: 'commit test data',
+      fromType: 'MAIN_APPLICATION'
+    })
+  }
 }
 </script>
 
@@ -31,11 +43,14 @@ export default class App extends Vue {
     position absolute
     width 100%
     height 100%
-    background rgba(255,255,255,.5)
+    background rgba(255,255,255,.7)
     top 0%
     left 0%
     padding-top 200px
     box-sizing border-box
+    font-size 100px
+    font-weight bold
+    z-index 999
   .appContainer
     width 100%
 </style>
